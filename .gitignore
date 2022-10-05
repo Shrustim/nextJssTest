@@ -14,7 +14,7 @@
 
 # production
 /build
-
+/constants/index.ts
 # misc
 .DS_Store
 *.pem
