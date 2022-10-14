@@ -1,0 +1,46 @@
+.menuUser {
+    background: grey;
+    height: 57px;
+    position: relative;
+    width: 57px;
+    /* line-height: 2px; */
+    // margin-right: 10px;
+    border-radius: 55px;
+}
+.menuUser > span {
+    position: absolute;
+    top: 13px;
+    left: 14px;
+    font-size: 27px;
+}
+.userInfo {
+    padding: 40px 5px 40px 27px;
+    color: white;
+    font-size: 20px;
+    display: flex;
+}
+.userFName {
+    height: 43px;
+    width: 123px;
+    line-height: 28px;
+    text-align: center;
+    font-size: 20px;
+}
+.crossIcon{
+    color: white;
+    font-size: 14px;
+    float: right;
+}
+@media screen and (max-width: 768px) {
+    .crossIcon{
+      display:block;
+    }
+  
+  }
+  @media screen and (min-width: 768px) {
+ 
+    .crossIcon{
+        display: none;
+    }
+   
+  }

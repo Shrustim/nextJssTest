@@ -12,3 +12,83 @@
 .CancelButton{
   margin-left: 10px;
 }
+.responsivTable{
+  width: 100%;
+  overflow-x: auto;
+}
+.mobileLogo{
+  color:white
+}
+
+.ant-layout-sider-children {
+  height: 100vh;
+}
+.ant-layout-sider-zero-width-trigger {
+  top: 21px;
+  right: -35px;
+  width: 28px;
+  height: 27px;
+  font-size: 21px;
+  line-height: 25px;
+}
+.logo{
+  border-bottom: 1px solid;
+  padding-left: 12px;
+  padding-right: 19px;
+}
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: #001529;
+  font-size: 15px;
+}
+.ant-layout-footer {
+  padding: 6px 36px;
+}
+@media screen and (max-width: 768px) {
+  .ant-layout-sider{
+    position: fixed;
+    top: 0px;
+    transition: all 0.35s ease 0s;
+    height: 100%;
+    z-index: 2000;
+  }
+  .ant-layout-header {
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+  }
+  .ant-layout-header {
+    height: 64px;
+    padding: 0 50px;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 64px;
+    background: #001529;
+}
+.ant-layout-content {
+  margin-top: 73px;
+}
+}
+@media screen and (min-width: 768px) {
+  .ant-layout-header {
+    height: 64px;
+    padding: 0 50px;
+    line-height: 64px;
+    background: #fafcff;
+    color: black;
+    border-bottom: 1px solid #bbb8b8;
+}
+.ant-layout-content {
+  margin-top: 10px;
+}
+}
+.ant-layout {
+  background: #ebebeb;
+}
+.wrapper-div {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  margin-top: 6px;
+}
+.ant-layout-sider-children{
+  border-right: 1px solid #abaaaa;
+}

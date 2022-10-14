@@ -1,12 +1,12 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
-import {useState,useEffect,useRef} from "react"
+import {useState,useEffect} from "react"
 import { Button ,Space, Table, Tag} from 'antd';
 import api from "../../src/restApi/index";
 import type { ColumnsType } from 'antd/es/table'
 import { useSelector } from 'react-redux';
 import moment from "moment";
-
+import {InfoOutlined,EditOutlined } from '@ant-design/icons';
 const apiobj = new api();
 interface DataType {
   key: string;
@@ -16,6 +16,7 @@ interface DataType {
   version: string;
   description: string;
   phoneNumber: string;
+  softwareCode: string;
 }
 
 const Softwares: NextPage = () => {
@@ -43,6 +44,20 @@ const Softwares: NextPage = () => {
 
   const columns: ColumnsType<DataType> = [
     {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+            <Link href={`/software/detail/${record.softwareCode}`} > 
+           <Button shape="circle" icon={<InfoOutlined />} /> 
+           </Link>
+          <Link href={`/software/${record.id}`} > 
+           <Button shape="circle" icon={<EditOutlined />} />
+            </Link>
+        </Space>
+      ),
+    },
+    {
       title: 'Id',
       dataIndex: 'id',
       key: 'id',
@@ -63,6 +78,11 @@ const Softwares: NextPage = () => {
       key: 'version',
     },
     {
+      title: 'Software code',
+      dataIndex: 'softwareCode',
+      key: 'softwareCode',
+    },
+    {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
@@ -78,16 +98,7 @@ const Softwares: NextPage = () => {
       key: 'softwareTypeName',
     },
    
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Link href={`/software/${record.id}`} > Edit  </Link>
-          {/* <a>Delete</a> */}
-        </Space>
-      ),
-    },
+   
   ];
   return (
       <div className='space-Top'>
@@ -98,12 +109,14 @@ const Softwares: NextPage = () => {
             </Link>
         </h2>
            <br/><br/>
+           <div className="responsivTable">
             <Table 
             loading={isLoading}
             columns={columns} dataSource={software.map((el: any, idx: any) => ({
                                 key: idx,
                                 ...el
                               }))} />
+           </div>                   
       </div>
   )
 }

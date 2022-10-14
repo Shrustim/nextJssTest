@@ -21,7 +21,7 @@ const Profile: NextPage = () => {
 // console.log("users",users)
   return (
     <div><h1>Profile</h1>
-            <Link href="/" >
+            {/* <Link href="/" >
               <a >Home</a>
             </Link><br/>
             <Link href="/login" >
@@ -35,10 +35,10 @@ const Profile: NextPage = () => {
             </Link><br/>
             <Link href="/software" >
               <a >software</a>
-            </Link>
+            </Link> */}
             <br/>
             
-           <h2>Email: {loginData.isLogin ? loginData.userinfo.email : null}</h2>
+           <h2>Email: {loginData.isLogin ? <span>{loginData.userinfo.email}</span> : null}</h2>
            <h2>Name: {loginData.isLogin ? loginData.userinfo.firstName : null}</h2>
              <br/>
           <br/>

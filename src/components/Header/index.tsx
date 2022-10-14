@@ -4,10 +4,11 @@ import {AppDispatch} from "../../store/store"
 import { useSelector, useDispatch } from 'react-redux';
 import {setLogout} from "../../store/reducers/loginSlice";
 import Cookies from 'js-cookie'
+import {LogoutOutlined ,MenuFoldOutlined,UserOutlined} from '@ant-design/icons';
 import {BaseURL} from "../../../constants"
-import { NextResponse } from 'next/server'
-
-function Header() {
+import { Button } from 'antd';
+import styles from "./header.module.scss";
+function Header(props: any) {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter()
   // 
@@ -18,16 +19,25 @@ function Header() {
     });
    
     
-    await dispatch(setLogout())
+    await dispatch(setLogout()) 
     // router.push('/logout');
-    window.location.href = ""+BaseURL+"login";
-  }
-  return (
-    <div><h2 style={{color:"white"}}>Header
-
-{
-      loginData.isLogin ?  <a href="#" style={{float:"right"}}  onClick={logout}>Logout</a> : null
+    if(loginData.userinfo.role === "admin"){
+      window.location.href = ""+BaseURL+"admin-login";
+    }else{
+      window.location.href = ""+BaseURL+"login";
     }
+  }
+  return ( 
+    <div>
+        
+      <h2 className="mobileLogo" > 
+      <MenuFoldOutlined className={styles.slideIcon} onClick={() => props.setCollapsed(!props.collapsed)} />
+      LoGO
+      <Button type="primary" className={styles.userIcon} shape="circle" icon={<UserOutlined />} />
+      {
+      loginData.isLogin ?  <a href="#" className={styles.logoutIcon}  onClick={logout}><LogoutOutlined/></a> : null
+    } 
+    
     </h2>
    
       

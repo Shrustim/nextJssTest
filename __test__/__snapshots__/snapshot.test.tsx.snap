@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders homepage unchanged 1`] = `
+<div>
+  <div>
+    <h1>
+      Welcome to 
+      <a
+        href="https://nextjs.org"
+      >
+        Home Page!
+      </a>
+    </h1>
+    <a
+      href="/"
+    >
+      Home
+    </a>
+    <br />
+    <a
+      href="/login"
+    >
+      Login
+    </a>
+    <br />
+    <a
+      href="/profile"
+    >
+      profile
+    </a>
+  </div>
+</div>
+`;

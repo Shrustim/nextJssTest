@@ -25,8 +25,9 @@ const Company: NextPage = () => {
     getCompanyList();
   },[])
   const getCompanyList= async()=>{
-    console.log("useEffect called",userData.id)
-    if(userData.id){
+    // console.log("userData===========",userData)
+    // console.log("useEffect called",userData.id)
+     if(userData.id){
         setIsLoading(true);
         console.log(userData.id)
         try {
@@ -37,7 +38,7 @@ const Company: NextPage = () => {
           setIsLoading(false);
         }
       
-    }
+     }
   }
 
   const columns: ColumnsType<DataType> = [
@@ -91,12 +92,14 @@ const Company: NextPage = () => {
             </Link>
         </h2>
            <br/><br/>
+           <div className="responsivTable">
             <Table 
             loading={isLoading}
             columns={columns} dataSource={company.map((el: any, idx: any) => ({
                                 key: idx,
                                 ...el
                               }))} />
+           </div>                   
       </div>
   )
 }

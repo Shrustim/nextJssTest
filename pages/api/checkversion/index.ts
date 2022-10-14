@@ -13,8 +13,8 @@ function handler(req: any, res: any) {
         const { softwareCode, version } = req.body;
         const isValidate = dataValidation();
         if(isValidate === true){
-          const querySqlCheck = await selectQuery("softwares",["id","softwareCode","version","apiCallsCount"],
-            "softwareCode = '"+softwareCode+"'")
+          const querySqlCheck = await selectQuery("softwares",["id","softwareCode","version","apiCallsCount","description"],
+            "softwareCode = '"+softwareCode+"'  AND currentVersionFlag = 1")
           const dataCheck:any = await query({ querys: querySqlCheck, values: [] });
           if (dataCheck.length != 0) {
             const today = new Date();
@@ -26,9 +26,9 @@ function handler(req: any, res: any) {
             await query({ querys: querySql, values: [] });
 
             if( version === dataCheck[0].version){
-                return res.status(200).json({flag : 0});
+                return res.status(200).json({flag : 0,currentVersion:dataCheck[0].version,description:dataCheck[0].description});
             }else{
-                return res.status(200).json({flag : 1});
+                return res.status(200).json({flag : 1,currentVersion:dataCheck[0].version,description:dataCheck[0].description});
             }
            
           }else{

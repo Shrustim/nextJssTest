@@ -1,0 +1,35 @@
+.userIcon{
+    float: right;
+    margin-top: 18px;
+    margin-left: 26px;
+}
+.logoutIcon{
+    float: right;
+    color: black;
+}
+.slideIcon{
+    margin-right: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .userIcon{
+      display:none;
+    }
+    .logoutIcon{
+        display:none;
+      }
+      .slideIcon{
+       color:white
+    }
+  }
+  @media screen and (min-width: 768px) {
+   .userIcon{
+        display: block;
+    }
+    .logoutIcon{
+        display: block;
+    }
+    .slideIcon{
+        color:black
+     }
+  }

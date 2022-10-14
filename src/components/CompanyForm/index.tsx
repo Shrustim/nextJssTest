@@ -18,12 +18,14 @@ export default function CompanyForm({id}:any) {
       var updateData = values;
       updateData.userId = userData.id;
       updateData.id = id;
+      setCompany(updateData)
        setLoading(true);
        try {
           const response: any = await apiobj.request("company", updateData, "patch");
+          // setCompany(updateData)
           setErrorMessage("")
           setLoading(false);
-          form.resetFields();
+          // form.resetFields();
           router.push('/company');
         }catch(error: any){
           setLoading(false);

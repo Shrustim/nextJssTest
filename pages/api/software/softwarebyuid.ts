@@ -10,8 +10,8 @@ function handler(req: any, res: any) {
             if(userId && userId > 0) {
                 const querySql = await selectQuery(
                     "softwares",
-                    ["softwares.id","softwareName","releaseDttm","software_types.softwareTypeName","companies.companyName","version","softwares.description","softwares.userId"],
-                    "softwares.userId ='"+userId+"' AND softwares.isActive = 1 AND softwares.isDeleted = 0",
+                    ["softwares.id","softwareName","releaseDttm","softwareCode","software_types.softwareTypeName","companies.companyName","version","softwares.description","softwares.userId"],
+                    "softwares.userId ='"+userId+"' AND softwares.currentVersionFlag = 1 AND softwares.isActive = 1 AND softwares.isDeleted = 0",
                     "LEFT JOIN software_types ON softwares.softwareTypeId = software_types.id  LEFT JOIN companies ON softwares.companyId = companies.id"
                     )
                 const data = await query({ querys: querySql, values: [] });

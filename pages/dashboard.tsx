@@ -7,9 +7,9 @@ const Home: NextPage = () => {
     
       <div>
         <h1>
-          Welcome to <a href="https://nextjs.org">Home Page! for everyone</a>
+          Welcome to <a href="https://nextjs.org">Dashboard!</a>
         </h1>
-        <Link href="/" >
+        {/* <Link href="/" >
               <a >Home</a>
             </Link><br/>
             <Link href="/login" >
@@ -17,7 +17,7 @@ const Home: NextPage = () => {
             </Link><br/>
             <Link href="/profile" >
               <a >profile</a>
-            </Link>
+            </Link> */}
       </div>
 
       

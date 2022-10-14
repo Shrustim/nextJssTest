@@ -10,7 +10,7 @@ function handler(req: any, res: any) {
             if(req.query.id && req.query.id > 0) {
                 const querySql = await selectQuery(
                     "softwares",
-                    ["id","softwareName","releaseDttm","softwareTypeId","version","description","userId","companyId"],
+                    ["id","softwareName","releaseDttm","softwareTypeId","version","description","userId","companyId","softwareCode"],
                     "id ='"+req.query.id+"' AND userId = '"+req.auth.sub+"' AND isActive = 1 AND isDeleted = 0"
                     )
                 const data = await query({ querys: querySql, values: [] });

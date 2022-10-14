@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import {setLogin,fetchUserById} from "../src/store/reducers/loginSlice"
 import ForgotPasswordModal from "../src/components/ForgotPasswordModal"
 import Cookies from 'js-cookie'
+import {BaseURL } from "../constants"
 const apiobj = new api();
 const Login: NextPage = () => {
   const router = useRouter()
@@ -32,7 +33,8 @@ const Login: NextPage = () => {
       await dispatch(fetchUserById(parseInt(token_data.sub)))
       setLoading(false);
       setErrorMessage("")
-      router.push('/admin/dashboard');
+      window.location.href = ""+BaseURL+"admin/dashboard";
+      // router.push('/admin/dashboard');
     }catch(error: any){
       setLoading(false);
       // console.log(error);

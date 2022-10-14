@@ -12,7 +12,7 @@ const { Option } = Select;
 export default function SoftwareForm({id}:any) {
     const router = useRouter()
     const [form] = Form.useForm();
-    const [software,setSoftware]=useState({});
+    const [software,setSoftware]=useState<any>({});
     const [companylist,setCompanylist]=useState([]);
     const [softwareTypelist,setSoftwareTypelist]=useState([]);
     const [errorMessage,setErrorMessage] = useState("");
@@ -23,6 +23,8 @@ export default function SoftwareForm({id}:any) {
       var updateData = values;
       updateData.userId = userData.id;
       updateData.id = id;
+      updateData.softwareCode = software.softwareCode;
+      setSoftware(updateData)
        setLoading(true);
        try {
           const response: any = await apiobj.request("software", updateData, "patch");

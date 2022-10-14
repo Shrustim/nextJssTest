@@ -3,11 +3,11 @@ import {useState} from "react"
 import jwt_decode from "jwt-decode";
 import { Col, Row, Button, Form, Input,Card  } from 'antd';
 import {useRouter} from 'next/router';
-import { useSelector, useDispatch } from 'react-redux'
+import { useAppSelector, useAppDispatch } from '../src/store/hooks'
 import styles from '../styles/Login.module.scss'
 import api from "../src/restApi/index";
 import {AppDispatch} from "../src/store/store"
-import { NextResponse } from 'next/server'
+// import { NextResponse } from 'next/server'
 import {setLogin,fetchUserById} from "../src/store/reducers/loginSlice"
 import ForgotPasswordModal from "../src/components/ForgotPasswordModal"
 import {BaseURL } from "../constants"
@@ -15,7 +15,9 @@ import Cookies from 'js-cookie'
 const apiobj = new api();
 const Login: NextPage = () => {
   const router = useRouter()
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch()
+
   const [errorMessage,setErrorMessage] = useState("");
   const [isForgotPasswordModal,setIsForgotPasswordModal] = useState(false);
   const [forgotpasswordEmail,setIsForgotPasswordEmail] = useState("");
@@ -27,18 +29,18 @@ const Login: NextPage = () => {
     try {
       const response: any = await apiobj.requestWithoutToken("users/authenticate", values, "post");
       var token_data: any = jwt_decode(response.data.token);
-      const responsee = await NextResponse.next()
+      // const responsee = await NextResponse.next()
       await Cookies.set('token', response.data.token, {
         expires: 1,
         path: BaseURL
       });
-      await responsee.cookies.set('token', response.data.token)
+      // await responsee.cookies.set('token', response.data.token)
       await dispatch(setLogin())
-      await dispatch(fetchUserById(parseInt(token_data.sub)))
+       await dispatch(fetchUserById(parseInt(token_data.sub)))
       setLoading(false);
       setErrorMessage("")
       // router.push('/profile');
-      window.location.href = ""+BaseURL+"profile";
+       window.location.href = ""+BaseURL+"dashboard";
     }catch(error: any){
       setLoading(false);
       // console.log(error);
@@ -71,14 +73,14 @@ const Login: NextPage = () => {
                 <Form.Item
                   label="Email"
                   name="email"
-                
+                  
                   rules={[{ required: true, message: 'Please enter your email.' },
                   {
                     type: 'email',
                     message: 'The input is not valid email.',
                   },]}
                 >
-                  <Input  onChange={(e)=>setIsForgotPasswordEmail(e.target.value) } />
+                  <Input data-testid="email-test" onChange={(e)=>setIsForgotPasswordEmail(e.target.value) } />
                 </Form.Item>
 
                 <Form.Item
@@ -97,7 +99,7 @@ const Login: NextPage = () => {
                     },
                   }),]}
                 >
-                  <Input.Password   />
+                  <Input.Password  data-testid="password-test" />
                 
                 </Form.Item>
                 {errorMessage ? 
@@ -113,7 +115,7 @@ const Login: NextPage = () => {
                   </a>
                 </Form.Item>
                 <Form.Item >
-                  <Button type="primary" htmlType="submit" loading={loading}>
+                  <Button type="primary" data-testid="submit-login"  htmlType="submit" loading={loading}>
                     Login
                   </Button>
                   <Button htmlType="button" className={styles.CancelButton} onClick={() => router.push('/')}>

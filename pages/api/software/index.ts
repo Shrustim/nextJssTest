@@ -63,6 +63,7 @@ function handler(req: any, res: any) {
                   "userId": userId,
                   "companyId":companyId,
                   "softwareCode":"SC"+Math.floor(10000 + Math.random() * 90000)+req.auth.sub+"",
+                  "currentVersionFlag": 1,
                   "createdDttm":today.getTime(),
                   "createdBy": req.auth.sub
                 }
@@ -83,31 +84,70 @@ function handler(req: any, res: any) {
         };
     }
     const updateSoftware =async () => {
-        const { softwareName, releaseDttm,softwareTypeId,version,description,userId,id ,companyId} = req.body;
+        const { softwareName, releaseDttm,softwareTypeId,version,description,userId,id ,companyId,softwareCode} = req.body;
         const isValidate = SoftwareValidation();
         if(isValidate === true ){
             if(id && id > 0){
                     const querySqlCheck = await selectQuery("softwares",["id"],
-                    "softwareName = '"+softwareName+"' AND id != '"+id+"'")
+                    "softwareName = '"+softwareName+"' AND id != '"+id+"' AND softwareCode != '"+softwareCode+"'")
                     const dataCheck:any = await query({ querys: querySqlCheck, values: [] });
                     if (dataCheck.length == 0) {
-                            const today = new Date();
-                            let releaseDttmT =  new Date(releaseDttm);
-                            const updateObj = {
-                            "softwareName":softwareName,
-                            "releaseDttm":releaseDttmT.getTime(),
-                            "softwareTypeId":softwareTypeId,
-                            "version":version,
-                            "description":  description == "null" || description == "NULL" || description === null ? "" : description,
-                            "userId": userId,
-                            "companyId":companyId,
-                            "updatedDttm":today.getTime(),
-                            "updatedBy": req.auth.sub
-                        }
-                        const querySql = await updateQuery(updateObj,"softwares","id = '"+id+"'")
-                        const data:any = await query({ querys: querySql, values: [] });
+                        const softwareDataSQL = await selectQuery("softwares",["version","softwareCode","apiCallsCount"]," id = '"+id+"'")
+                        const softwareData:any = await query({ querys: softwareDataSQL, values: [] });
+                        if(softwareData[0].version === version ){ 
+                                const today = new Date();
+                                let releaseDttmT =  new Date(releaseDttm);
+                                const updateObj = {
+                                "softwareName":softwareName,
+                                "releaseDttm":releaseDttmT.getTime(),
+                                "softwareTypeId":softwareTypeId,
+                                "version":version,
+                                "description":  description == "null" || description == "NULL" || description === null ? "" : description,
+                                "userId": userId,
+                                "companyId":companyId,
+                                "updatedDttm":today.getTime(),
+                                "updatedBy": req.auth.sub
+                            }
+                            const querySql = await updateQuery(updateObj,"softwares","id = '"+id+"'")
+                            const data:any = await query({ querys: querySql, values: [] });
 
-                        return res.status(200).json({});
+                            return res.status(200).json({});
+                        }else{
+
+                            const softwareVersionSQL = await selectQuery("softwares",["version"],"version = '"+version+"' AND softwareCode = '"+softwareData[0].softwareCode +"'")
+                            const softwareVersion:any = await query({ querys: softwareVersionSQL, values: [] });
+                            if(softwareVersion.length >= 1){
+                                     throw 'Software version is old version.It is already used.'
+                            }else{
+                                    const today = new Date();
+                                    let releaseDttmT =  new Date(releaseDttm);
+                                    const updateObj = {
+                                        "currentVersionFlag": 0,
+                                        "updatedDttm":today.getTime(),
+                                        "updatedBy": req.auth.sub
+                                    }
+                                    const querySql = await updateQuery(updateObj,"softwares","id = '"+id+"'")
+                                    const data:any = await query({ querys: querySql, values: [] });
+                                    const insertObj = {
+                                        "softwareName":softwareName,
+                                        "releaseDttm":releaseDttmT.getTime(),
+                                        "softwareTypeId":softwareTypeId,
+                                        "version":version,
+                                        "description": description == "null" || description == "NULL" || description === null ? "" : description,
+                                        "userId": userId,
+                                        "companyId":companyId,
+                                        "softwareCode":softwareData[0].softwareCode,
+                                        "createdDttm":today.getTime(),
+                                        "currentVersionFlag": 1,
+                                        "apiCallsCount":softwareData[0].apiCallsCount,
+                                        "createdBy": req.auth.sub
+                                    }
+                                    const querySql1 = await insertQuery(insertObj,"softwares")
+                                    const data1:any = await query({ querys: querySql1, values: [] });
+                                    return res.status(200).json({});
+                            }
+                        }
+                       
                     }
                     else{
                          throw 'Software is already exits.'

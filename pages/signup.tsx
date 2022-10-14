@@ -6,8 +6,9 @@ import {useRouter} from 'next/router';
 import { useSelector, useDispatch } from 'react-redux'
 import styles from '../styles/Login.module.scss'
 import api from "../src/restApi/index";
+import {BaseURL } from "../constants"
 import {AppDispatch} from "../src/store/store"
-import { NextResponse } from 'next/server'
+// import { NextResponse } from 'next/server'
 import {setLogin,fetchUserById} from "../src/store/reducers/loginSlice"
 import Cookies from 'js-cookie'
 const apiobj = new api();
@@ -23,13 +24,14 @@ const SignUp: NextPage = () => {
       const response: any = await apiobj.requestWithoutToken("users/signup", values, "post");
       // localStorage.setItem("token", response.data.token);
       var token_data: any = jwt_decode(response.data.token);
-      const responsee = NextResponse.next()
-      Cookies.set('token', response.data.token, { expires: 30 })
+      // const responsee = NextResponse.next()
+      Cookies.set('token', response.data.token, {  expires: 1,
+        path: BaseURL })
       await dispatch(setLogin())
       await dispatch(fetchUserById(parseInt(token_data.sub)))
       setErrorMessage("")
       setLoading(false);
-      router.push('/');
+      window.location.href = ""+BaseURL+"dashboard";
     }catch(error: any){
       setLoading(false);
       console.log(error);
@@ -69,7 +71,7 @@ const SignUp: NextPage = () => {
                     message: 'The input is not valid email.',
                   },]}
                 >
-                  <Input   />
+                  <Input  data-testid="email-test" />
                 </Form.Item>
 
                 <Form.Item
@@ -78,7 +80,7 @@ const SignUp: NextPage = () => {
                 
                   rules={[{ required: true, message: 'Please enter your first name.' }]}
                 >
-                  <Input   />
+                  <Input data-testid="firstName-test"  />
                 </Form.Item>
                 
                 <Form.Item
@@ -87,7 +89,7 @@ const SignUp: NextPage = () => {
                 
                   rules={[{ required: true, message: 'Please enter your last name.' }]}
                 >
-                  <Input   />
+                  <Input data-testid="lastName-test"  />
                 </Form.Item>
                 
 
@@ -123,7 +125,7 @@ const SignUp: NextPage = () => {
                       }),
                     ]}
                   >
-                    <Input.Password />
+                    <Input.Password  data-testid="password-test" />
                   </Form.Item>
 
                   <Form.Item
@@ -145,7 +147,7 @@ const SignUp: NextPage = () => {
                       }),
                     ]}
                   >
-                    <Input.Password />
+                    <Input.Password  data-testid="confirmpassword-test" />
                   </Form.Item>
                   {errorMessage ? 
                  <>
@@ -153,7 +155,7 @@ const SignUp: NextPage = () => {
                   <br/>
                  </>:null}
                 <Form.Item >
-                  <Button type="primary" htmlType="submit"  loading={loading}>
+                  <Button type="primary" htmlType="submit" data-testid="submit-signup"  loading={loading}>
                     Submit
                   </Button>
                   <Button htmlType="button" className={styles.CancelButton} onClick={() => router.push('/')}>

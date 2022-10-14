@@ -3,7 +3,7 @@ import React from 'react'
 function Footer() {
   return (
     <div>
-       <h2>Footer</h2>
+       <h4> @2022  My Software Update All rights reserved</h4>
         
       
     </div>

@@ -35,7 +35,7 @@ export const selectQuery = (tableName:string,col:any = [],whereCondition:string 
     if(whereCondition && whereCondition != ""){
         whereClause = "WHERE "+ whereCondition+"";
     }
-    var sql = "SELECT  "+columns+" FROM  "+tableName+" " + join+ " "+ whereClause+" ";
+    var sql = "SELECT  "+columns+" FROM  "+tableName+" " + join+ " "+ whereClause+"  ORDER by "+tableName+".id DESC";
       console.log(sql);
     return sql;
 }

@@ -1,0 +1,31 @@
+.spaceCard{
+    margin: 10px;
+}
+.labelCompany{
+    margin-bottom: 10px;
+    label{
+        margin-left: 10px;
+    }
+}
+.softwareInfo{
+    color: rgb(0 0 0);
+    font-weight: initial;
+    label{
+        color: #2a2929;
+        font-weight: bold;
+    }
+}
+
+.requestBody{
+    border-left: 1px solid #bcbcbc;
+    margin-left: 12px;
+    div {
+        padding-left: 16px;
+        border-bottom: 1px solid #bcbcbc;
+        padding-bottom: 7px;
+        padding-top: 7px;
+    }
+    div:last-child {
+        border-bottom: 0px solid #bcbcbc;
+    }
+}
