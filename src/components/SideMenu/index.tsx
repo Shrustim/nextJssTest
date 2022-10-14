@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {UsergroupAddOutlined, LogoutOutlined, UserOutlined, FundProjectionScreenOutlined,
   FileProtectOutlined ,CloseOutlined } from '@ant-design/icons';
 import {  Menu } from 'antd';
@@ -16,10 +16,11 @@ export default function SideMenu(props: any) {
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' }) 
     const router = useRouter() 
     const loginData = useSelector((state:any) => state.login);
-    loginData.userinfo.role
+    const [selectedMenu,setSelectedMenu] = useState([router.pathname]) 
     const onClickMenu = async(e:any) =>{
+      setSelectedMenu([e.key]);
     // console.log(e,"------------")
-          if(e.key === "logout"){
+          if(e.key === "/logout"){
                 Cookies.remove('token', {
                   expires: 1 
                 });
@@ -61,32 +62,32 @@ export default function SideMenu(props: any) {
                     theme="dark"
                     mode="inline"
                     onClick={onClickMenu}
-                    defaultSelectedKeys={['dashboard']}
+                    defaultSelectedKeys={selectedMenu}
                     items={loginData.userinfo.role === "user" ? [
                       {
                         icon: FileProtectOutlined  ,
                         name:"Dashboard",
-                        path:"dashboard"
+                        path:"/dashboard"
                       },
                       {
                         icon: UsergroupAddOutlined ,
                         name:"Company",
-                        path:"company"
+                        path:"/company"
                       },
                       {
                         icon: FundProjectionScreenOutlined,
                         name:"My Software",
-                        path:"software"
+                        path:"/software"
                       },
                       {
                         icon: UserOutlined,
                         name:"Profile",
-                        path:"profile"
+                        path:"/profile"
                       },
                       {
                         icon: LogoutOutlined ,
                         name:"Logout",
-                        path:"logout"
+                        path:"/logout"
                       }
 
                      ].map(
@@ -99,27 +100,27 @@ export default function SideMenu(props: any) {
                       {
                         icon: FileProtectOutlined  ,
                         name:"Dashboard",
-                        path:"admin/dashboard"
+                        path:"/admin/dashboard"
                       },
                       {
                         icon: UserOutlined  ,
                         name:"Users",
-                        path:"admin/users"
+                        path:"/admin/users"
                       },
                       {
                         icon:  UsergroupAddOutlined,
                         name:"Companies",
-                        path:"admin/companies"
+                        path:"/admin/companies"
                       },
                       {
                         icon: FundProjectionScreenOutlined,
                         name:"softwares",
-                        path:"admin/softwares"
+                        path:"/admin/softwares"
                       },
                       {
                         icon: LogoutOutlined ,
                         name:"Logout",
-                        path:"logout"
+                        path:"/logout"
                       }
 
                      ].map(

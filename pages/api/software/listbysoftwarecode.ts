@@ -16,7 +16,7 @@ function handler(req: any, res: any) {
                 }
                 const querySql = await selectQuery(
                     "softwares",
-                    ["softwares.id","softwareName","releaseDttm","currentVersionFlag","softwareCode","software_types.softwareTypeName","softwares.companyId","version","softwares.description","softwares.userId"],
+                    ["softwares.id","softwareName","releaseDttm","currentVersionFlag","softwareCode","software_types.softwareTypeName","softwares.companyId","version","softwares.description","softwares.userId","softwares.apiCallsCount"],
                     "softwares.userId ='"+userId+"' AND softwares.softwareCode = '"+ softwareCode+"' AND softwares.isActive = 1 AND softwares.isDeleted = 0",
                     "LEFT JOIN software_types ON softwares.softwareTypeId = software_types.id  "
                     )

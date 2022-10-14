@@ -121,6 +121,9 @@ const SoftwareEdit: NextPage = () => {
                         <h3 className={styles.softwareInfo}>
                           Software Code: <label>{softwareCode}</label>
                         </h3>
+                        <h3 className={styles.softwareInfo}>
+                        API Calls Count: <label>{softwarelist[0].apiCallsCount}</label>
+                        </h3>
                         <Divider orientation="left">API</Divider>
                         <h3><Tag color="#2db7f5">POST</Tag> /api/checkversion</h3>
                         <h4 style={{fontWeight: 400}}>Description: This API is used in your software to determine whether an user has an old version or not. If the version is old, then you can show a popup.</h4>

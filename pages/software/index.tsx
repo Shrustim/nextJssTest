@@ -17,6 +17,7 @@ interface DataType {
   description: string;
   phoneNumber: string;
   softwareCode: string;
+  apiCallsCount: number;
 }
 
 const Softwares: NextPage = () => {
@@ -97,6 +98,11 @@ const Softwares: NextPage = () => {
       dataIndex: 'softwareTypeName',
       key: 'softwareTypeName',
     },
+    {
+      title:"API Calls Count",
+      dataIndex:"apiCallsCount",
+      key:"apiCallsCount"
+    }
    
    
   ];
