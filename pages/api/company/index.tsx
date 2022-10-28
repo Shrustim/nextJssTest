@@ -1,21 +1,66 @@
 import { apiHandler } from '../../../helpers/api';
 import { query } from "../../../lib/db";
-import { selectQuery,insertQuery,updateQuery} from "../../../helpers/sqlquerys"
+import { selectQuery,insertQuery,updateQuery,selectCountQuery} from "../../../helpers/sqlquerys"
 export default apiHandler(handler);
 
 function handler(req: any, res: any) {
     const getCompanies = async() =>  {
         if(req.method === 'GET'){
             if(req.auth.role === "admin"){
-                 const querySql = await selectQuery(
+                const {  offset, count, companyName, userName, email,limit } = req.query;
+                var limitValue = limit && limit > 0 ? limit : 10;
+                var querySql ="";
+                let search = "";
+                if(companyName &&  companyName!=""){
+                    search += " AND companyName LIKE '%"+companyName+"%' ";
+                }
+                if(userName &&  userName!=""){
+                    search += " AND (u.firstName LIKE '%"+userName+"%' OR u.lastName LIKE '%"+userName+"%') ";
+                }
+                if(email &&  email!="" ){
+                    search += " AND companies.email LIKE '%"+email+"%' ";
+                }
+
+                if(count){
+                   
+                    var querySql = await selectCountQuery(
+                        "companies",
+                        ["count(companies.id) as count"],
+                        "companies.isDeleted = 0",
+                        "LEFT JOIN users u ON companies.userId = u.id",
+                        search
+                        )
+                }else{
+                    let pagination = '';
+                    if(offset && offset > 0 || offset == 0) {
+                        pagination = " LIMIT "+limitValue+" OFFSET "+offset+" ";
+                    }
+                    var querySql = await selectQuery(
                         "companies",
                         ["companies.id","companyName","contactPerson","companies.email as companyEmail",
                         "websiteUrl","phoneNumber","userId","u.firstName","u.lastName","u.email"],
                         "companies.isDeleted = 0",
-                        "LEFT JOIN users u ON companies.userId = u.id"
-                        ) 
-                    const data = await query({ querys: querySql, values: [] });
-                    res.status(200).json(data)
+                        "LEFT JOIN users u ON companies.userId = u.id",
+                        pagination,
+                        search
+                        )
+                }
+                const data = await query({ querys: querySql, values: [] });
+                res.status(200).json(data)
+               
+
+
+
+
+                //  const querySql = await selectQuery(
+                    //     "companies",
+                    //     ["companies.id","companyName","contactPerson","companies.email as companyEmail",
+                    //     "websiteUrl","phoneNumber","userId","u.firstName","u.lastName","u.email"],
+                    //     "companies.isDeleted = 0",
+                    //     "LEFT JOIN users u ON companies.userId = u.id"
+                    //     ) 
+                    // const data = await query({ querys: querySql, values: [] });
+                    // res.status(200).json(data)
                 }
                 else{
                     res.status(200).json({})

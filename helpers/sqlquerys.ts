@@ -23,7 +23,7 @@ export const updateQuery = (obj: any,tableName:any,whereCondition: any) => {
     return sql;
 }
 
-export const selectQuery = (tableName:string,col:any = [],whereCondition:string ="",join:string = "" ) => {
+export const selectQuery = (tableName:string,col:any = [],whereCondition:string ="",join:string = "" , pagination:string = "",search:string = "") => {
     var columns  = '*';
     if(col.length > 0){
         columns = "";
@@ -35,7 +35,24 @@ export const selectQuery = (tableName:string,col:any = [],whereCondition:string 
     if(whereCondition && whereCondition != ""){
         whereClause = "WHERE "+ whereCondition+"";
     }
-    var sql = "SELECT  "+columns+" FROM  "+tableName+" " + join+ " "+ whereClause+"  ORDER by "+tableName+".id DESC";
+    var sql = "SELECT  "+columns+" FROM  "+tableName+" " + join+ " "+ whereClause+" "+search+" ORDER by "+tableName+".id DESC " + pagination;
+      console.log(sql);
+    return sql;
+}
+
+export const selectCountQuery = (tableName:string,col:any = [],whereCondition:string ="",join:string = "" ,search:string = "") => {
+    var columns  = '*';
+    if(col.length > 0){
+        columns = "";
+        col.map((e:any,index:any) => {
+           columns+= col.length == (index + 1) ? e :e+",";
+        })
+    } 
+    var whereClause = "";
+    if(whereCondition && whereCondition != ""){
+        whereClause = "WHERE "+ whereCondition+"";
+    }
+    var sql = "SELECT  "+columns+" FROM  "+tableName+" " + join+ " "+ whereClause+" " +search+" ";
       console.log(sql);
     return sql;
 }

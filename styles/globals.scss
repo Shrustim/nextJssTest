@@ -92,3 +92,9 @@
 .ant-layout-sider-children{
   border-right: 1px solid #abaaaa;
 }
+
+@media only screen and (max-width: 576px) { 
+    .ant-pagination-options {
+         display: block; 
+    }
+}

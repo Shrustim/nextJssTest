@@ -1,15 +1,16 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import {useState,useEffect} from "react"
-import {Col, Row, Button ,Space, DatePicker,Table, Input } from 'antd';
-import api from "../../src/restApi/index";
+import {Col, Row, Button ,Space, Table, Input } from 'antd';
+import api from "../../../src/restApi/index";
 import type { ColumnsType } from 'antd/es/table'
 import { useSelector } from 'react-redux';
 import moment from "moment";
+import { useRouter } from 'next/router';
 import {InfoOutlined,EditOutlined } from '@ant-design/icons';
-import useDidMountEffectWithSearchDelay  from "../../src/customHooks/useDidMountEffectWithSearch"
+import { GetServerSideProps } from 'next'
+import useDidMountEffectWithSearchDelay  from "../../../src/customHooks/useDidMountEffectWithSearch"
 
-const { RangePicker } = DatePicker;
 const apiobj = new api();
 interface DataType {
   key: string;
@@ -23,11 +24,10 @@ interface DataType {
   apiCallsCount: number;
 }
 
-const Softwares: NextPage = () => {
-  const [software,setSoftwares] = useState([]);
+const Softwares: NextPage =  ({data}:any) => {
+  const [software,setSoftwares] = useState(data.software ? data.software : []);
   const [isLoading,setIsLoading] = useState(false);
-  const [startDate,setStartDate] = useState<any>();
-  const [endDate,setEndDate] = useState<any>();
+  const [companyInfo,setCompanyInfo] = useState<any>(data.companyInfo ? data.companyInfo : {});
   const [filterVersion,setFilterVersion] = useState("");
   const [filterSoftwareCode,setFilterSoftwareCode] = useState("");
   const [filterSoftwareName,setFilterSoftwareName] = useState("");
@@ -36,40 +36,17 @@ const Softwares: NextPage = () => {
       current: 1,
       pageSize: 10,
       showQuickJumper:true,
-      total: 0,
+      total: data.count ? data.count : 0,
       responsive:true,
       showLessItems:true,
       showTotal:(total:any, range:any) => `${range[0]}-${range[1]} of ${total} items`
     },
   });
+  const router = useRouter();
+  const { companyId } = router.query
   const userData = useSelector((state:any) => state.login.userinfo);
-  const getDate = (e:any) => {
-    console.log(e)
-    if(e) {
-      setStartDate(e[0]._d)
-      setEndDate(e[1]._d)
-    }else{
-      setStartDate("");
-      setEndDate("");
-    }
-   
-   }
 
-  
-  useEffect(()=>{
-    const getData = async() => {
-      setIsLoading(true); 
-      try {
-          await getCountSoftwaresList();
-          await getSoftwaresList(0);
-          setIsLoading(false);
-      }
-      catch(error: any){
-        setIsLoading(false);
-      }
-    }
-    getData();
-  },[])
+
   const getDataOnSearch = async() => {
         setIsLoading(true); 
         try {
@@ -81,21 +58,19 @@ const Softwares: NextPage = () => {
           setIsLoading(false);
         }
   }
+
   useDidMountEffectWithSearchDelay(() => {
     getDataOnSearch();
-    
-  },[filterVersion,filterSoftwareCode,filterSoftwareName,endDate])
+  },[filterVersion,filterSoftwareCode,filterSoftwareName])
   
   const getCountSoftwaresList = async() => {
-        if(userData.id){
+        if(userData.id && companyId){
           try {
-            const response: any = await apiobj.request("software/softwarebyuid",
-                        { "userId": userData.id,"count":true,
+            const response: any = await apiobj.request("software/softwarebyCompany",
+                        { "companyId": companyId,"count":true,
                           "softwareName" : filterSoftwareName,
                           "softwareCode": filterSoftwareCode,
-                          "version":filterVersion,
-                          "startDate":startDate,
-                          "endDate":endDate
+                          "version":filterVersion
                          }, 
                         "post");
             setTableParams({
@@ -107,20 +82,18 @@ const Softwares: NextPage = () => {
             });
            }catch(error: any){
           }
-        
+         
       }
   }
   const getSoftwaresList= async(offsetValue: number)=>{
-     if(userData.id){
+     if(userData.id && companyId){
         try {
-          const response: any = await apiobj.request("software/softwarebyuid", 
-          {"userId": userData.id,"offset":offsetValue,
+          const response: any = await apiobj.request("software/softwarebyCompany", 
+          {"companyId": companyId,"offset":offsetValue,
            "softwareName" : filterSoftwareName,
            "softwareCode": filterSoftwareCode,
-           "limit":tableParams.pagination.pageSize,
            "version":filterVersion,
-           "startDate":startDate,
-           "endDate":endDate
+           "limit":tableParams.pagination.pageSize
           }, "post");
           setSoftwares(response.data)
         }catch(error: any){
@@ -128,17 +101,13 @@ const Softwares: NextPage = () => {
       
      }
   }
-  const disabledDate = (current: any) => {
-    // Can not select days before today and today
-    return current && current > moment().endOf('day');
-  };
    // Pagination on change.
    const handleTableChange= async (pagination:any, filters:any, sorter:any) => {
     const count=pagination.pageSize;
     const pager = tableParams;
     pager.pagination.current = pagination.current;
     pager.pagination.pageSize = pagination.pageSize;
-    var offset :number= ( pager.pagination.current - 1) * count;	
+    var offset :number= ( pager.pagination.current -  1) * count;	
     setTableParams(pager);
     setIsLoading(true); 
     try {
@@ -215,36 +184,26 @@ const Softwares: NextPage = () => {
   ];
   return (
       <div className='space-Top'>
-        <h2>Software List
+        <h2>Company and Software Details
 
-        <Link href="/software/create" >
-           <Button type="primary" style={{float:"right"}}>Add</Button>
+        <Link href="/admin/companies" >
+           <Button type="primary" style={{float:"right"}}>Back</Button>
             </Link>
         </h2> 
-           <br/>
-           <br/>
-           <Row>
-           <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 7 }} 
-           lg={{ span: 7 }}  xl={{ span: 7 }} xxl={{ span: 7 }}>
-              <div    style={{padding:"5px 5px 5px 0px"}}>
-                <label>Release Date:</label>
-                <RangePicker onChange={getDate} disabledDate={disabledDate} />
-                </div>
-            
-           </Col>
-            
-           <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 7 }} 
-           lg={{ span: 7 }}  xl={{ span: 7 }} xxl={{ span: 7 }}>
-                <div    style={{padding:"5px 5px 5px 0px"}}>
-                <label>Software Name:</label>
-                  <Input placeholder="Software Name " value={filterSoftwareName} 
-                  onChange={(e) => {setFilterSoftwareName(e.target.value)}}
-                  style={{width:"100%"}} />
-                </div>
-          </Col>
+        <br/>
+           <h3>Company name: <span>{companyInfo ? companyInfo.companyName: null}</span> </h3>
+           <h3>Contact person: <span>{companyInfo ? companyInfo.contactPerson : null}</span> </h3>
+           <h3>Email: <span>{companyInfo? companyInfo.email :null}</span> </h3>
+           <h3>Website URL: <span>{companyInfo ? companyInfo.websiteUrl : null}</span> </h3>
+           <h3>Phone number: <span>{companyInfo ? companyInfo.phoneNumber: null }</span> </h3>
+           
           
+           <Row>
           <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 5 }} 
-           lg={{ span: 5 }}  xl={{ span: 5 }} xxl={{ span: 5 }}>
+           lg={{ span: 5 }}  xl={{ span: 5}} xxl={{ span: 5 }}></Col>
+            
+             <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 6 }} 
+           lg={{ span: 6 }}  xl={{ span: 6 }} xxl={{ span: 6 }}>
                 <div    style={{padding:"5px 5px 5px 0px"}}>
                 <label>Software Code:</label>
                   <Input placeholder="Software Code" value={filterSoftwareCode} 
@@ -252,8 +211,17 @@ const Softwares: NextPage = () => {
                   style={{width:"100%"}} />
                 </div>
             </Col>
-          <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 5 }} 
-           lg={{ span: 5 }}  xl={{ span: 5 }} xxl={{ span: 5 }}>
+             <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 6 }} 
+           lg={{ span: 6 }}  xl={{ span: 6 }} xxl={{ span: 6 }}>
+                <div    style={{padding:"5px 5px 5px 0px"}}>
+                <label>Software Name:</label>
+                  <Input placeholder="Software Name " value={filterSoftwareName} 
+                  onChange={(e) => {setFilterSoftwareName(e.target.value)}}
+                  style={{width:"100%"}} />
+                </div>
+          </Col>
+          <Col xs={{ span: 24}} sm={{ span: 24 }} md={{ span: 6 }} 
+           lg={{ span: 6 }}  xl={{ span: 6 }} xxl={{ span: 6 }}>
                 <div    style={{padding:"5px 5px 5px 0px"}}>
                   <label>Version:</label>
                   <Input placeholder="Version " value={filterVersion} 
@@ -285,4 +253,36 @@ const Softwares: NextPage = () => {
   )
 }
 
+
+
+// This gets called on every request
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  
+  var software:any = [];
+  var companyInfo:any = {};
+  var count:any = 0;
+  let companyId = context.params?.companyId;
+  // Fetch data from external API
+    try {
+      const responseCompany: any = await apiobj.request("company/"+companyId+"",{}, "get",context.req.cookies['token']);
+      companyInfo =responseCompany.data[0];
+      const responseCount: any =await apiobj.request("software/softwarebyCompany", 
+      { "companyId": companyId,"count":true}, 
+      "post" ,context.req.cookies['token']);
+        count= responseCount.data[0].count || 0;
+      const responseSoftware: any = await apiobj.request("software/softwarebyCompany", 
+      {"companyId": companyId,"offset":0}, "post" ,context.req.cookies['token']);
+      software=responseSoftware.data
+    }catch(error: any){
+    }
+  // var  cookies1 = context.req.headers.cookie;
+ 
+ var data:any = {
+  "software":software,
+  "companyInfo":companyInfo,
+  "count":count
+ }
+  // Pass data to the page via props
+  return { props: { data } }
+}
 export default Softwares

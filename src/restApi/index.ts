@@ -4,13 +4,16 @@ export const baseUrl = "https://adminpanel-decorate.herokuapp.com/api/"; // dev
 
 
 export default class api {
-  request(name: any, postData: any, method: any) {
+  request(name: any, postData: any, method: any,token:any = "") {
     return new Promise(function (resolve, reject) {
       var url = baseUrl + name;
       var headers: any={ "Content-Type": "application/json" };
-      
-      if (Cookies.get('token')) {
-        headers={ "Content-Type": "application/json", 'authorization':'Bearer '+Cookies.get('token')+"" }
+      let JWTtoken = Cookies.get('token');
+      if(token != ""){
+        JWTtoken = token;
+      }
+      if (JWTtoken) {
+        headers={ "Content-Type": "application/json", 'authorization':'Bearer '+JWTtoken+"" }
       }
       if (method === undefined) {
         method = "post";

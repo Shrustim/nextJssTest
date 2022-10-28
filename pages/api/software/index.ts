@@ -1,22 +1,57 @@
 import { apiHandler } from '../../../helpers/api';
 import { query } from "../../../lib/db";
-import { selectQuery,insertQuery,updateQuery} from "../../../helpers/sqlquerys"
+import { selectQuery,insertQuery,updateQuery,selectCountQuery} from "../../../helpers/sqlquerys"
 export default apiHandler(handler);
 
 function handler(req: any, res: any) {
     const getSoftwares = async() =>  {
         if(req.method === 'GET'){
             if(req.auth.role === "admin"){
-               const querySql = await selectQuery(
-                "softwares",
-                ["softwares.id","softwareName","releaseDttm","software_types.softwareTypeName","companies.companyName","version",
-                "softwares.description","softwares.userId","u.firstName","u.lastName","u.email"],
-                "softwares.isDeleted = 0",
-                "LEFT JOIN users u ON softwares.userId = u.id LEFT JOIN software_types ON softwares.softwareTypeId = software_types.id  LEFT JOIN companies ON softwares.companyId = companies.id"
+                const { offset, count,version, softwareCode, softwareName,limit, startDate, endDate } = req.query;
+                var limitValue = limit && limit > 0 ? limit : 10;
+                var querySql ="";
+                let search = "";
+                    search += version ? " AND version LIKE '%"+version+"%' " : "";
+                    search += softwareCode ? " AND softwareCode LIKE '%"+softwareCode+"%' ": "";
+                    search += softwareName ? " AND softwareName LIKE '%"+softwareName+"%' ": "";
+                    search += startDate && endDate && new Date(startDate).getTime() > 0 && new Date(endDate).getTime() > 0 ? 
+                             "AND releaseDttm BETWEEN "+new Date(startDate).getTime()+" AND "+new Date(endDate).getTime()+" " : "";
+                if(count){
                 
-                    )
+                    var querySql = await selectCountQuery(
+                        "softwares",
+                        ["count(softwares.id) as count"],
+                        "softwares.isDeleted = 0 AND softwares.currentVersionFlag = 1",
+                        "",
+                        search
+                        )
+                }else{
+                    let pagination = '';
+                    if(offset && offset > 0 || offset == 0 && limitValue > 0) {
+                        pagination = " LIMIT "+limitValue+" OFFSET "+offset+" ";
+                    }
+                    var querySql = await selectQuery(
+                        "softwares",
+                        ["softwares.id","softwareName","softwareCode","releaseDttm","software_types.softwareTypeName","companies.companyName","version",
+                        "softwares.description","softwares.userId","u.firstName","u.lastName","u.email"],
+                        "softwares.isDeleted = 0 AND softwares.currentVersionFlag = 1",
+                        "LEFT JOIN users u ON softwares.userId = u.id LEFT JOIN software_types ON softwares.softwareTypeId = software_types.id  LEFT JOIN companies ON softwares.companyId = companies.id",
+                        pagination,
+                        search
+                        )
+                }
                 const data = await query({ querys: querySql, values: [] });
                 res.status(200).json(data)
+            //    const querySql = await selectQuery(
+            //     "softwares",
+            //     ["softwares.id","softwareName","releaseDttm","software_types.softwareTypeName","companies.companyName","version",
+            //     "softwares.description","softwares.userId","u.firstName","u.lastName","u.email"],
+            //     "softwares.isDeleted = 0",
+            //     "LEFT JOIN users u ON softwares.userId = u.id LEFT JOIN software_types ON softwares.softwareTypeId = software_types.id  LEFT JOIN companies ON softwares.companyId = companies.id"
+                
+            //         ) 
+            //     const data = await query({ querys: querySql, values: [] });
+            //     res.status(200).json(data)
             }
             else{
                 res.status(200).json({})

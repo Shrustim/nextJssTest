@@ -63,15 +63,9 @@ export const config = {
     '/dashboard',
     '/login',
     '/company',
-    '/company/create',
-    '/company/[id]',
+    '/company/:path*',
     '/software',
-    '/software/create',
-    '/software/detail/[softwareCode]',
-    '/software/[id]',
-    '/admin/dashboard',
-    '/admin/companies',
-    '/admin/users',
-    '/admin/softwares'
+    '/software/:path*',
+    '/admin/:path*'
   ],
 }

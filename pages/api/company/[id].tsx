@@ -8,10 +8,12 @@ function handler(req: any, res: any) {
         if(req.method === 'GET'){
             console.log("req",req.auth.sub)
             if(req.query.id && req.query.id > 0) {
+                let condition = req.auth.role == "admin" ? "" : "AND userId = '"+req.auth.sub+"'";
+                
                 const querySql = await selectQuery(
                     "companies",
                     ["id","companyName","contactPerson","email","websiteUrl","phoneNumber","userId"],
-                    "id ='"+req.query.id+"' AND userId = '"+req.auth.sub+"' AND isActive = 1 AND isDeleted = 0"
+                    "id ='"+req.query.id+"' "+condition+" AND isActive = 1 AND isDeleted = 0"
                     )
                 const data = await query({ querys: querySql, values: [] });
                 res.status(200).json(data)

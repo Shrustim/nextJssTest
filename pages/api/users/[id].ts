@@ -8,7 +8,7 @@ function handler(req: NextApiRequest,
     res: NextApiResponse) {
     const getUserById = async() =>  {
         if(req.method === 'GET'){
-            const columns :any = ["id","email","firstName","lastName","role"];
+            const columns :any = ["id","email","firstName","lastName","role","lastLoggedDttm"];
             const whereCondition = "id ='"+req.query.id+"' AND isActive = 1 AND isDeleted = 0";
             const querySql = await selectQuery("users",columns,whereCondition)
             // const querySql ="SELECT id,email,firstName,lastName,role FROM users where id ='"+req.query.id+"' AND isActive = 1 AND isDeleted = 0";
